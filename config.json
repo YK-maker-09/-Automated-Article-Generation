@@ -1,0 +1,24 @@
+{
+  "monthly_target": 30,
+  "model": "claude-opus-4-8",
+  "quality_threshold": 80,
+  "max_revisions": 2,
+  "revenue_goal_yen": [
+    50000,
+    100000
+  ],
+  "price_range_yen": [
+    100,
+    500
+  ],
+  "genres": [
+    "副業・お金の増やし方",
+    "AI・ChatGPT活用術",
+    "仕事術・生産性向上",
+    "ライフハック・習慣化",
+    "SNS運用・発信ノウハウ",
+    "キャリア・転職",
+    "健康・メンタル管理"
+  ],
+  "x_account": "@Interkyky"
+}
