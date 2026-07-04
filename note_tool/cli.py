@@ -1,6 +1,7 @@
 """CLIエントリポイント。
 
 使い方:
+  python -m note_tool gui                                     ブラウザGUIを起動(推奨)
   python -m note_tool generate [-n 本数] [--theme "テーマ"]   記事を生成
   python -m note_tool list [--month YYYY-MM]                  記事一覧
   python -m note_tool status                                  今月の進捗
@@ -18,49 +19,18 @@ from dotenv import load_dotenv
 from . import config as config_module
 from . import storage
 from .claude_client import ClaudeClient
-from .evaluator import evaluate_article, format_review
-from .planner import plan_articles
-from .writer import revise_article, write_article
+from .pipeline import generate_articles
 from .x_poster import compose_tweet, post_tweet, x_credentials_available
 
 
 def cmd_generate(args) -> None:
     config = config_module.load_config()
-    client = ClaudeClient(config["model"])
-    count = args.count
 
     remaining = _remaining_this_month(config)
     if remaining <= 0:
         print(f"⚠ 今月の目標 {config['monthly_target']} 本は達成済みです。続けて生成します。")
 
-    print(f"▶ 記事プランを立案中({count}本)...")
-    plans = plan_articles(client, config, count, storage.recent_titles(), args.theme)
-
-    for i, plan in enumerate(plans, 1):
-        article_id = storage.new_article_id()
-        plan["id"] = article_id
-        label = {"free": "無料", "partial_paid": f"一部有料 {plan['price_yen']}円",
-                 "full_paid": f"全文有料 {plan['price_yen']}円"}[plan["monetization"]]
-        print(f"\n[{i}/{len(plans)}] {plan['title']}({label})")
-
-        print("  ✎ 本文を執筆中...")
-        body = write_article(client, plan)
-
-        print("  ⚖ 多角的評価を実行中...")
-        evaluation = evaluate_article(client, plan, body)
-        revisions = 0
-        while (
-            evaluation["total_score"] < config["quality_threshold"]
-            and revisions < config["max_revisions"]
-        ):
-            revisions += 1
-            print(f"  ↻ スコア {evaluation['total_score']} 点 → リライト {revisions} 回目...")
-            body = revise_article(client, plan, body, evaluation)
-            evaluation = evaluate_article(client, plan, body)
-
-        review_md = format_review(plan, evaluation, revisions, config)
-        article_dir = storage.save_article(article_id, plan, body, evaluation, review_md)
-        print(f"  ✔ 完成(総合 {evaluation['total_score']} 点)→ {article_dir}")
+    generate_articles(config, args.count, args.theme, log=print)
 
     print("\n──────────────────────────────")
     print("次のステップ:")
@@ -119,6 +89,12 @@ def cmd_posted(args) -> None:
         storage.mark_posted(args.article_id, args.url, x_posted)
         print(f"✔ 記事 {args.article_id} を投稿済みとして記録しました。")
         _print_status(config)
+
+
+def cmd_gui(args) -> None:
+    from .webapp import run_gui
+
+    run_gui(port=args.port, open_browser=not args.no_browser)
 
 
 def cmd_config(args) -> None:
@@ -187,6 +163,11 @@ def main() -> None:
     p.add_argument("--skip-x", action="store_true", help="X投稿をスキップ(文面生成のみ)")
     p.add_argument("--dry-run", action="store_true", help="投稿・記録をせず文面だけ確認")
     p.set_defaults(func=cmd_posted)
+
+    p = sub.add_parser("gui", help="ブラウザGUIを起動する")
+    p.add_argument("--port", type=int, default=8787, help="ポート番号(既定: 8787)")
+    p.add_argument("--no-browser", action="store_true", help="ブラウザを自動で開かない")
+    p.set_defaults(func=cmd_gui)
 
     p = sub.add_parser("config", help="設定を確認・変更する")
     p.add_argument("--set", action="append", metavar="KEY=VALUE",

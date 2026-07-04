@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>note記事自動生成ツール</title>
+<style>
+  :root {
+    --bg: #f6f5f1; --card: #ffffff; --ink: #232323; --sub: #6b6b6b;
+    --accent: #2cb696; --accent-dark: #219b7f; --line: #e3e1da; --warn: #c0392b;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
+         background: var(--bg); color: var(--ink); }
+  header { background: var(--card); border-bottom: 1px solid var(--line);
+           padding: 14px 24px; display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; }
+  header h1 { font-size: 18px; margin: 0; }
+  #progress { color: var(--sub); font-size: 13px; }
+  nav { display: flex; gap: 4px; padding: 10px 24px 0; }
+  nav button { border: 1px solid var(--line); border-bottom: none; background: #eceae4;
+               padding: 9px 20px; border-radius: 8px 8px 0 0; cursor: pointer; font-size: 14px; }
+  nav button.active { background: var(--card); font-weight: bold; }
+  main { padding: 0 24px 40px; }
+  section.tab { display: none; background: var(--card); border: 1px solid var(--line);
+                border-radius: 0 10px 10px 10px; padding: 20px; }
+  section.tab.active { display: block; }
+  h2 { font-size: 15px; margin: 0 0 12px; }
+  label { display: block; font-size: 13px; color: var(--sub); margin: 12px 0 4px; }
+  input[type=text], input[type=number], select, textarea {
+    width: 100%; max-width: 640px; padding: 8px 10px; border: 1px solid var(--line);
+    border-radius: 6px; font-size: 14px; font-family: inherit; background: #fff; }
+  textarea { resize: vertical; }
+  button.primary { background: var(--accent); color: #fff; border: none; padding: 10px 22px;
+                   border-radius: 6px; font-size: 14px; cursor: pointer; margin-top: 14px; }
+  button.primary:hover { background: var(--accent-dark); }
+  button.primary:disabled { background: #b8b6af; cursor: not-allowed; }
+  button.ghost { background: #fff; color: var(--ink); border: 1px solid var(--line);
+                 padding: 8px 16px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+  #log { background: #1e2a26; color: #cdeee4; font-family: ui-monospace, monospace;
+         font-size: 12.5px; padding: 14px; border-radius: 8px; min-height: 120px;
+         max-height: 320px; overflow-y: auto; white-space: pre-wrap; margin-top: 16px; display: none; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  tr.row { cursor: pointer; }
+  tr.row:hover { background: #f2fbf8; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
+  .badge.draft { background: #fdf3d7; color: #8a6d1a; }
+  .badge.posted { background: #d9f2ea; color: #1a7a63; }
+  #detail { display: none; margin-top: 18px; border-top: 2px solid var(--accent); padding-top: 14px; }
+  pre.md { background: #faf9f6; border: 1px solid var(--line); border-radius: 8px;
+           padding: 14px; font-size: 13px; white-space: pre-wrap; max-height: 420px; overflow-y: auto; }
+  .msg { margin-top: 10px; font-size: 13px; }
+  .msg.err { color: var(--warn); }
+  .msg.ok { color: var(--accent-dark); }
+  .cols { display: flex; gap: 24px; flex-wrap: wrap; }
+  .cols > div { flex: 1; min-width: 340px; }
+  .note-box { background: #f2fbf8; border: 1px solid #cdeade; border-radius: 8px;
+              padding: 10px 14px; font-size: 13px; margin: 10px 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>📝 note記事自動生成ツール</h1>
+  <span id="progress">読み込み中...</span>
+</header>
+
+<nav>
+  <button data-tab="generate" class="active">記事を生成</button>
+  <button data-tab="articles">記事一覧</button>
+  <button data-tab="settings">設定</button>
+</nav>
+
+<main>
+  <!-- ============ 生成タブ ============ -->
+  <section id="tab-generate" class="tab active">
+    <h2>記事を生成する</h2>
+    <p style="font-size:13px;color:var(--sub)">
+      テーマ・タイトル・収益化方式(無料/一部有料/全文有料と価格)はAIが判断します。
+      生成後に7つの観点で自動評価し、基準点未満なら自動リライトします。
+    </p>
+    <label>生成する本数(1〜10)</label>
+    <input type="number" id="gen-count" min="1" max="10" value="1" style="max-width:120px">
+    <label>テーマ(空欄ならAIにおまかせ)</label>
+    <input type="text" id="gen-theme" placeholder="例: ChatGPTで家計簿を自動化する方法">
+    <br>
+    <button class="primary" id="gen-btn" onclick="startGenerate()">生成スタート</button>
+    <div class="msg err" id="gen-msg"></div>
+    <div id="log"></div>
+  </section>
+
+  <!-- ============ 記事一覧タブ ============ -->
+  <section id="tab-articles" class="tab">
+    <h2>記事一覧</h2>
+    <table>
+      <thead><tr><th>記事ID</th><th>状態</th><th>方式</th><th>点数</th><th>タイトル</th></tr></thead>
+      <tbody id="article-rows"></tbody>
+    </table>
+
+    <div id="detail">
+      <h2 id="d-title"></h2>
+      <div class="note-box" id="d-monetization"></div>
+      <div class="cols">
+        <div>
+          <h2>① 本文(noteにコピペ)</h2>
+          <button class="ghost" onclick="copyBody()">📋 本文をコピー</button>
+          <span class="msg ok" id="copy-msg"></span>
+          <pre class="md" id="d-body"></pre>
+        </div>
+        <div>
+          <h2>② 最終チェックシート(評価と投稿手順)</h2>
+          <pre class="md" id="d-review"></pre>
+        </div>
+      </div>
+
+      <div id="posted-box">
+        <h2 style="margin-top:20px">③ note投稿が終わったら → X告知</h2>
+        <label>公開したnote記事のURL</label>
+        <input type="text" id="note-url" placeholder="https://note.com/xxxx/n/xxxxxxxx">
+        <br>
+        <button class="primary" id="tweet-btn" onclick="makeTweet()">ツイート文を生成</button>
+        <div id="tweet-area" style="display:none">
+          <label>ツイート文(編集してから投稿できます)</label>
+          <textarea id="tweet-text" rows="5"></textarea>
+          <br>
+          <button class="primary" id="post-x-btn" onclick="markPosted(true)">Xに投稿して記録</button>
+          <button class="ghost" style="margin-left:8px" onclick="markPosted(false)">記録のみ(X投稿しない)</button>
+        </div>
+        <div class="msg" id="posted-msg"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 設定タブ ============ -->
+  <section id="tab-settings" class="tab">
+    <h2>設定</h2>
+    <div class="cols">
+      <div>
+        <label>月間の目標記事数</label>
+        <input type="number" id="cfg-monthly_target" min="1">
+        <label>合格基準スコア(0〜100。未満なら自動リライト)</label>
+        <input type="number" id="cfg-quality_threshold" min="0" max="100">
+        <label>自動リライトの最大回数</label>
+        <input type="number" id="cfg-max_revisions" min="0" max="5">
+        <label>使用モデル</label>
+        <select id="cfg-model">
+          <option value="claude-opus-4-8">claude-opus-4-8(高品質)</option>
+          <option value="claude-sonnet-5">claude-sonnet-5(低コスト)</option>
+        </select>
+      </div>
+      <div>
+        <label>有料記事の価格帯(円)最小 / 最大</label>
+        <div style="display:flex;gap:8px;max-width:300px">
+          <input type="number" id="cfg-price-min" min="100" step="100">
+          <input type="number" id="cfg-price-max" min="100" step="100">
+        </div>
+        <label>記事ジャンル(1行に1つ。AIはここから需要を見て選びます)</label>
+        <textarea id="cfg-genres" rows="8"></textarea>
+      </div>
+    </div>
+    <button class="primary" onclick="saveConfig()">設定を保存</button>
+    <div class="msg" id="cfg-msg"></div>
+    <div class="note-box" id="x-status" style="margin-top:16px"></div>
+  </section>
+</main>
+
+<script>
+let state = null;
+let currentArticleId = null;
+let jobTimer = null;
+
+// ---------- タブ切り替え ----------
+document.querySelectorAll("nav button").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll("nav button").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll("section.tab").forEach(s => s.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
+  };
+});
+
+// ---------- 状態の読み込み ----------
+async function refreshState() {
+  state = await (await fetch("/api/state")).json();
+  const c = state.config;
+  document.getElementById("progress").textContent =
+    `${state.month}: 生成 ${state.monthly_generated}/${c.monthly_target} 本・投稿済み ${state.monthly_posted} 本` +
+    (state.paid_posted_count ? `・有料 ${state.paid_posted_count} 本(計 ${state.paid_price_total.toLocaleString()}円)` : "");
+  renderArticles();
+  fillConfig();
+}
+
+function monetizationLabel(a) {
+  return {free: "無料", partial_paid: `一部有料 ${a.price_yen}円`, full_paid: `全文有料 ${a.price_yen}円`}[a.monetization];
+}
+
+function renderArticles() {
+  const tbody = document.getElementById("article-rows");
+  if (!state.articles.length) {
+    tbody.innerHTML = `<tr><td colspan="5" style="color:var(--sub)">まだ記事がありません。「記事を生成」タブから作成してください。</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = state.articles.map(a => `
+    <tr class="row" onclick="openArticle('${a.id}')">
+      <td>${a.id}</td>
+      <td><span class="badge ${a.status === "posted" ? "posted" : "draft"}">${a.status === "posted" ? "投稿済" : "下書き"}</span></td>
+      <td>${monetizationLabel(a)}</td>
+      <td>${a.score}</td>
+      <td>${esc(a.title)}</td>
+    </tr>`).join("");
+}
+
+function esc(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+
+// ---------- 生成 ----------
+async function startGenerate() {
+  const btn = document.getElementById("gen-btn");
+  const msg = document.getElementById("gen-msg");
+  msg.textContent = "";
+  const res = await fetch("/api/generate", {
+    method: "POST", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      count: +document.getElementById("gen-count").value,
+      theme: document.getElementById("gen-theme").value,
+    }),
+  });
+  if (!res.ok) { msg.textContent = (await res.json()).error || "開始に失敗しました"; return; }
+  btn.disabled = true;
+  document.getElementById("log").style.display = "block";
+  jobTimer = setInterval(pollJob, 1500);
+  pollJob();
+}
+
+async function pollJob() {
+  const j = await (await fetch("/api/job")).json();
+  const logEl = document.getElementById("log");
+  logEl.textContent = j.log.join("\n");
+  logEl.scrollTop = logEl.scrollHeight;
+  if (!j.running && j.done) {
+    clearInterval(jobTimer);
+    document.getElementById("gen-btn").disabled = false;
+    refreshState();
+  }
+}
+
+// ---------- 記事詳細 ----------
+async function openArticle(id) {
+  const res = await fetch("/api/article/" + id);
+  if (!res.ok) return;
+  const d = await res.json();
+  currentArticleId = id;
+  const meta = d.meta;
+  document.getElementById("d-title").textContent = `${meta.id} ${meta.title}`;
+  document.getElementById("d-monetization").textContent =
+    `収益化方式: ${monetizationLabel(meta)} ─ ${meta.plan.monetization_reason}`;
+  document.getElementById("d-body").textContent = d.article_md;
+  document.getElementById("d-review").textContent = d.review_md;
+  document.getElementById("note-url").value = meta.note_url || "";
+  document.getElementById("tweet-area").style.display = "none";
+  document.getElementById("posted-msg").textContent = "";
+  document.getElementById("detail").style.display = "block";
+  document.getElementById("detail").scrollIntoView({behavior: "smooth"});
+}
+
+async function copyBody() {
+  await navigator.clipboard.writeText(document.getElementById("d-body").textContent);
+  const m = document.getElementById("copy-msg");
+  m.textContent = "コピーしました!noteに貼り付けてください";
+  setTimeout(() => (m.textContent = ""), 3000);
+}
+
+// ---------- 投稿記録 & X告知 ----------
+async function makeTweet() {
+  const url = document.getElementById("note-url").value.trim();
+  const msg = document.getElementById("posted-msg");
+  msg.className = "msg err"; msg.textContent = "";
+  if (!url.startsWith("http")) { msg.textContent = "note記事のURLを入力してください"; return; }
+  const btn = document.getElementById("tweet-btn");
+  btn.disabled = true; btn.textContent = "生成中...";
+  const res = await fetch("/api/tweet", {
+    method: "POST", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({id: currentArticleId, url}),
+  });
+  btn.disabled = false; btn.textContent = "ツイート文を生成";
+  const d = await res.json();
+  if (!res.ok) { msg.textContent = d.error; return; }
+  document.getElementById("tweet-text").value = d.tweet;
+  document.getElementById("tweet-area").style.display = "block";
+}
+
+async function markPosted(postToX) {
+  const msg = document.getElementById("posted-msg");
+  msg.className = "msg err"; msg.textContent = "";
+  if (postToX && !state.x_configured) {
+    msg.textContent = "X APIキーが未設定です(.envを設定して再起動)。「記録のみ」を使い、文面を手動で投稿してください。";
+    return;
+  }
+  const res = await fetch("/api/posted", {
+    method: "POST", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      id: currentArticleId,
+      url: document.getElementById("note-url").value.trim(),
+      tweet: document.getElementById("tweet-text").value,
+      post_to_x: postToX,
+    }),
+  });
+  const d = await res.json();
+  if (!res.ok) { msg.textContent = d.error; return; }
+  msg.className = "msg ok";
+  msg.textContent = d.x_posted ? `✔ Xに投稿し、記録しました: ${d.tweet_url}` : "✔ 投稿済みとして記録しました";
+  refreshState();
+}
+
+// ---------- 設定 ----------
+function fillConfig() {
+  const c = state.config;
+  document.getElementById("cfg-monthly_target").value = c.monthly_target;
+  document.getElementById("cfg-quality_threshold").value = c.quality_threshold;
+  document.getElementById("cfg-max_revisions").value = c.max_revisions;
+  document.getElementById("cfg-model").value = c.model;
+  document.getElementById("cfg-price-min").value = c.price_range_yen[0];
+  document.getElementById("cfg-price-max").value = c.price_range_yen[1];
+  document.getElementById("cfg-genres").value = c.genres.join("\n");
+  document.getElementById("x-status").textContent = state.x_configured
+    ? "✅ X APIキー設定済み: 告知ツイートを自動投稿できます(@Interkyky)"
+    : "⚠ X APIキー未設定: ツイート文の生成までは可能です。自動投稿するには .env にキーを設定してツールを再起動してください。";
+}
+
+async function saveConfig() {
+  const updates = {
+    monthly_target: +document.getElementById("cfg-monthly_target").value,
+    quality_threshold: +document.getElementById("cfg-quality_threshold").value,
+    max_revisions: +document.getElementById("cfg-max_revisions").value,
+    model: document.getElementById("cfg-model").value,
+    price_range_yen: [+document.getElementById("cfg-price-min").value,
+                      +document.getElementById("cfg-price-max").value],
+    genres: document.getElementById("cfg-genres").value.split("\n").map(s => s.trim()).filter(Boolean),
+  };
+  const res = await fetch("/api/config", {
+    method: "POST", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(updates),
+  });
+  const msg = document.getElementById("cfg-msg");
+  msg.className = res.ok ? "msg ok" : "msg err";
+  msg.textContent = res.ok ? "✔ 保存しました" : (await res.json()).error;
+  if (res.ok) refreshState();
+}
+
+// 起動時: 生成ジョブが走っていれば表示を復元
+refreshState().then(async () => {
+  const j = await (await fetch("/api/job")).json();
+  if (j.running) {
+    document.getElementById("gen-btn").disabled = true;
+    document.getElementById("log").style.display = "block";
+    jobTimer = setInterval(pollJob, 1500);
+  } else if (j.log.length) {
+    document.getElementById("log").style.display = "block";
+    document.getElementById("log").textContent = j.log.join("\n");
+  }
+});
+</script>
+</body>
+</html>
