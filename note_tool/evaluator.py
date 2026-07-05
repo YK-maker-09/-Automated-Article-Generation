@@ -1,6 +1,8 @@
-"""記事の多角的評価。7つの観点でスコアリングし、改善点を抽出する。"""
+"""記事の多角的評価。7つの観点でスコアリングし、改善点を抽出する。
 
-from .claude_client import ClaudeClient
+注意: このモジュールはAPI不要の運用(CLAUDE.mdの保存スニペット)からも import される。
+anthropic パッケージへの依存を持ち込まないよう、ClaudeClient は関数内で遅延importする。
+"""
 
 AXES = [
     ("title_appeal", "タイトル訴求力(クリックしたくなるか)"),
@@ -36,7 +38,7 @@ SYSTEM = """あなたはnote(note.com)のコンテンツを専門とする辛口
 甘い点数をつけると書き手のためになりません。80点は「自信を持って公開できる水準」です。"""
 
 
-def evaluate_article(client: ClaudeClient, plan: dict, body: str) -> dict:
+def evaluate_article(client, plan: dict, body: str) -> dict:
     axes_desc = "\n".join(f"- {key}: {desc}" for key, desc in AXES)
     prompt = f"""以下のnote記事を多角的に評価してください。
 

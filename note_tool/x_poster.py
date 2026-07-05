@@ -2,8 +2,6 @@
 
 import os
 
-from .claude_client import ClaudeClient
-
 TWEET_SCHEMA = {
     "type": "object",
     "properties": {"tweet": {"type": "string"}},
@@ -25,7 +23,7 @@ noteの記事公開を告知するツイートを書きます。
 - URLは含めない(こちらで末尾に追加する)"""
 
 
-def compose_tweet(client: ClaudeClient, meta: dict, note_url: str) -> str:
+def compose_tweet(client, meta: dict, note_url: str) -> str:
     plan = meta.get("plan", meta)
     monetization = {
         "free": "全文無料",
