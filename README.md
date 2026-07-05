@@ -17,6 +17,18 @@ note(note.com)への投稿記事を **AIが多角的に分析・評価しなが�
 | X自動告知 | note投稿完了を記録すると、告知ツイートを自動生成してXに投稿 |
 | 本数の増減 | `monthly_target` の設定変更だけで月間目標本数を変更可能 |
 
+## 費用をかけない使い方(Claude APIなしで運用する)
+
+Claude APIを契約していなくても、**普段お使いのClaude(Cowork / Claude Desktop / Claude.ai)の利用枠**で同じ品質基準の記事を作れます。追加費用はゼロです。
+
+- **Cowork / Claude Code の場合**: このリポジトリを開いて「記事を1本作って」と言うだけ。リポジトリ内の `CLAUDE.md` に生成手順(プラン→執筆→7軸評価→リライト→保存)が定義されており、Claudeがツールと同じ形式で `articles/` に保存し、管理台帳にも登録します
+- **Claude Desktop / Claude.ai の場合**: `prompts/ClaudeDesktop用プロンプト.md` の内容を会話に貼り付けるだけ。記事本文・チェックシート・X告知文まで一括で出力されます
+- **X告知**: 生成された告知文をXアプリに手動で貼るか、PCで
+  `python -m note_tool posted <記事ID> --url <noteのURL> --tweet "<告知文>"`
+  を実行(X APIキーがあれば自動投稿。**Claude APIキーは不要**)
+
+GUI(`python -m note_tool gui`)からの全自動生成を使いたくなったときだけ、Claude APIのチャージが必要になります。
+
 ## セットアップ
 
 ### 1. 依存パッケージのインストール

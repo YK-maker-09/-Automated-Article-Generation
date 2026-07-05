@@ -68,9 +68,13 @@ def cmd_posted(args) -> None:
     with open(meta_path, encoding="utf-8") as f:
         meta = json.load(f)
 
-    print("▶ X告知ツイートを生成中...")
-    client = ClaudeClient(config["model"])
-    tweet = compose_tweet(client, meta, args.url)
+    if args.tweet:
+        # 文面が渡されたときはAI生成を行わない(Claude APIキー不要で使える)
+        tweet = f"{args.tweet.strip()}\n\n{args.url}"
+    else:
+        print("▶ X告知ツイートを生成中...")
+        client = ClaudeClient(config["model"])
+        tweet = compose_tweet(client, meta, args.url)
     print("\n─── ツイート文 ───")
     print(tweet)
     print("──────────────\n")
@@ -160,6 +164,7 @@ def main() -> None:
     p = sub.add_parser("posted", help="note投稿を記録し、Xに告知する")
     p.add_argument("article_id", help="記事ID(list コマンドで確認)")
     p.add_argument("--url", required=True, help="公開したnote記事のURL")
+    p.add_argument("--tweet", help="告知文を直接指定(AI生成を省略。Claude APIキー不要)")
     p.add_argument("--skip-x", action="store_true", help="X投稿をスキップ(文面生成のみ)")
     p.add_argument("--dry-run", action="store_true", help="投稿・記録をせず文面だけ確認")
     p.set_defaults(func=cmd_posted)
