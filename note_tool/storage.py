@@ -61,6 +61,9 @@ def save_article(
     article_dir.mkdir(parents=True, exist_ok=True)
 
     (article_dir / "article.md").write_text(body, encoding="utf-8")
+    # ブログのHTMLビューにそのまま貼れるHTML版も出力(見出し・表が反映される)
+    from .htmlize import markdown_to_html
+    (article_dir / "article.html").write_text(markdown_to_html(body), encoding="utf-8")
     (article_dir / "review.md").write_text(review_md, encoding="utf-8")
     meta = {
         "id": article_id,

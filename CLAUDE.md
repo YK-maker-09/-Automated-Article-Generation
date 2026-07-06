@@ -47,6 +47,7 @@ review = format_review(plan, evaluation, revisions, load_config())
 review += f"\n## 内部リンク候補\n\n- {関連過去記事のタイトル}\n"
 review += f"\n## X告知文の下書き(投稿時に末尾へ記事URLを追加)\n\n```\n{tweet_draft}\n```\n"
 storage.save_article(article_id, plan, body, evaluation, review)
+# save_article は article.md と一緒に、Bloggerにそのまま貼れる article.html も自動生成する
 ```
 
 ## 定期実行時の通知ポリシー(1日10回動くため)

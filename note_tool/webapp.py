@@ -115,9 +115,17 @@ def api_article(article_id: str):
         return jsonify({"error": "記事が見つかりません"}), 404
     article_dir = Path(article["dir"])
     meta = json.loads((article_dir / "meta.json").read_text(encoding="utf-8"))
+    body_md = (article_dir / "article.md").read_text(encoding="utf-8")
+    html_path = article_dir / "article.html"
+    if html_path.exists():
+        article_html = html_path.read_text(encoding="utf-8")
+    else:
+        from .htmlize import markdown_to_html  # 旧記事はその場で変換
+        article_html = markdown_to_html(body_md)
     return jsonify({
         "meta": meta,
-        "article_md": (article_dir / "article.md").read_text(encoding="utf-8"),
+        "article_md": body_md,
+        "article_html": article_html,
         "review_md": (article_dir / "review.md").read_text(encoding="utf-8"),
     })
 

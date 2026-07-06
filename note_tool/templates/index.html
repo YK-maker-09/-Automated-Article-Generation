@@ -102,7 +102,8 @@
       <div class="cols">
         <div>
           <h2>① 本文(ブログにコピペ)</h2>
-          <button class="ghost" onclick="copyBody()">📋 本文をコピー</button>
+          <button class="primary" style="margin-top:0" onclick="copyBody('html')">📋 HTMLをコピー(Bloggerの「HTMLビュー」に貼る)</button>
+          <button class="ghost" style="margin-left:8px" onclick="copyBody('md')">Markdownをコピー</button>
           <span class="msg ok" id="copy-msg"></span>
           <pre class="md" id="d-body"></pre>
         </div>
@@ -249,6 +250,7 @@ async function openArticle(id) {
   document.getElementById("d-title").textContent = `${meta.id} ${meta.title}`;
   document.getElementById("d-monetization").textContent =
     `収益化方式: ${monetizationLabel(meta)} ─ ${meta.plan.monetization_reason}`;
+  window._articleMd = d.article_md; window._articleHtml = d.article_html;
   document.getElementById("d-body").textContent = d.article_md;
   document.getElementById("d-review").textContent = d.review_md;
   document.getElementById("note-url").value = meta.note_url || "";
@@ -258,11 +260,14 @@ async function openArticle(id) {
   document.getElementById("detail").scrollIntoView({behavior: "smooth"});
 }
 
-async function copyBody() {
-  await navigator.clipboard.writeText(document.getElementById("d-body").textContent);
+async function copyBody(fmt) {
+  const text = fmt === "html" ? window._articleHtml : window._articleMd;
+  await navigator.clipboard.writeText(text);
   const m = document.getElementById("copy-msg");
-  m.textContent = "コピーしました!ブログに貼り付けてください";
-  setTimeout(() => (m.textContent = ""), 3000);
+  m.textContent = fmt === "html"
+    ? "HTMLをコピーしました!Bloggerの投稿画面で「HTMLビュー」に切り替えて貼り付けてください"
+    : "Markdownをコピーしました";
+  setTimeout(() => (m.textContent = ""), 4000);
 }
 
 // ---------- 投稿記録 & X告知 ----------
