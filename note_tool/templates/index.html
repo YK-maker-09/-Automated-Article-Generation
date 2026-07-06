@@ -190,7 +190,9 @@ async function refreshState() {
 }
 
 function monetizationLabel(a) {
-  return {free: "無料", partial_paid: `一部有料 ${a.price_yen}円`, full_paid: `全文有料 ${a.price_yen}円`}[a.monetization];
+  return {adsense: "広告(AdSense)", free: "無料",
+          partial_paid: `一部有料 ${a.price_yen}円`,
+          full_paid: `全文有料 ${a.price_yen}円`}[a.monetization] || a.monetization;
 }
 
 function renderArticles() {

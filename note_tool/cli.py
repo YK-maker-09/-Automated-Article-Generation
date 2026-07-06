@@ -47,8 +47,9 @@ def cmd_list(args) -> None:
         return
     print(f"{'記事ID':<14} {'状態':<6} {'方式':<12} {'点':<4} タイトル")
     for a in articles:
-        monetization = {"free": "無料", "partial_paid": f"一部有料{a['price_yen']}円",
-                        "full_paid": f"全文有料{a['price_yen']}円"}[a["monetization"]]
+        monetization = {"adsense": "広告(AdSense)", "free": "無料",
+                        "partial_paid": f"一部有料{a['price_yen']}円",
+                        "full_paid": f"全文有料{a['price_yen']}円"}.get(a["monetization"], a["monetization"])
         status = "投稿済" if a["status"] == "posted" else "下書き"
         print(f"{a['id']:<14} {status:<6} {monetization:<12} {a['score']:<4} {a['title']}")
 
@@ -129,10 +130,13 @@ def _print_status(config: dict) -> None:
     month = datetime.now().strftime("%Y-%m")
     articles = storage.list_articles(month)
     posted = [a for a in articles if a["status"] == "posted"]
-    paid_posted = [a for a in posted if a["monetization"] != "free"]
+    ad_articles = [a for a in articles if a["monetization"] == "adsense"]
+    paid_posted = [a for a in posted if a.get("price_yen", 0) > 0]
     goal_min, goal_max = config["revenue_goal_yen"]
     print(f"\n📊 {month} の進捗")
     print(f"  生成済み: {len(articles)} / {config['monthly_target']} 本(投稿済み {len(posted)} 本)")
+    if ad_articles:
+        print(f"  広告収益記事(AdSense): {len(ad_articles)} 本 — 収益はPV次第(AdSense管理画面で確認)")
     if paid_posted:
         total_price = sum(a["price_yen"] for a in paid_posted)
         print(f"  投稿済み有料記事: {len(paid_posted)} 本(価格合計 {total_price:,} 円)")
