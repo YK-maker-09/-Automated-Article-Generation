@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>note記事自動生成ツール</title>
+<title>ブログ記事自動生成ツール(AdSense)</title>
 <style>
   :root {
     --bg: #f6f5f1; --card: #ffffff; --ink: #232323; --sub: #6b6b6b;
@@ -60,7 +60,7 @@
 </head>
 <body>
 <header>
-  <h1>📝 note記事自動生成ツール</h1>
+  <h1>📝 ブログ記事自動生成ツール(AdSense)</h1>
   <span id="progress">読み込み中...</span>
 </header>
 
@@ -75,8 +75,8 @@
   <section id="tab-generate" class="tab active">
     <h2>記事を生成する</h2>
     <p style="font-size:13px;color:var(--sub)">
-      テーマ・タイトル・収益化方式(無料/一部有料/全文有料と価格)はAIが判断します。
-      生成後に7つの観点で自動評価し、基準点未満なら自動リライトします。
+      狙う検索キーワード・タイトル・構成はAIが判断します(高単価カテゴリ優先)。
+      生成後に7つの観点(検索意図・滞在時間・AI引用適性など)で自動評価し、基準点未満なら自動リライトします。
     </p>
     <label>生成する本数(1〜10)</label>
     <input type="number" id="gen-count" min="1" max="10" value="1" style="max-width:120px">
@@ -101,7 +101,7 @@
       <div class="note-box" id="d-monetization"></div>
       <div class="cols">
         <div>
-          <h2>① 本文(noteにコピペ)</h2>
+          <h2>① 本文(ブログにコピペ)</h2>
           <button class="ghost" onclick="copyBody()">📋 本文をコピー</button>
           <span class="msg ok" id="copy-msg"></span>
           <pre class="md" id="d-body"></pre>
@@ -113,9 +113,9 @@
       </div>
 
       <div id="posted-box">
-        <h2 style="margin-top:20px">③ note投稿が終わったら → X告知</h2>
-        <label>公開したnote記事のURL</label>
-        <input type="text" id="note-url" placeholder="https://note.com/xxxx/n/xxxxxxxx">
+        <h2 style="margin-top:20px">③ ブログ投稿が終わったら → X告知</h2>
+        <label>公開した記事のURL</label>
+        <input type="text" id="note-url" placeholder="https://your-blog.com/chatgpt-gijiroku">
         <br>
         <button class="primary" id="tweet-btn" onclick="makeTweet()">ツイート文を生成</button>
         <div id="tweet-area" style="display:none">
@@ -148,11 +148,6 @@
         </select>
       </div>
       <div>
-        <label>有料記事の価格帯(円)最小 / 最大</label>
-        <div style="display:flex;gap:8px;max-width:300px">
-          <input type="number" id="cfg-price-min" min="100" step="100">
-          <input type="number" id="cfg-price-max" min="100" step="100">
-        </div>
         <label>記事ジャンル(1行に1つ。AIはここから需要を見て選びます)</label>
         <textarea id="cfg-genres" rows="8"></textarea>
       </div>
@@ -266,7 +261,7 @@ async function openArticle(id) {
 async function copyBody() {
   await navigator.clipboard.writeText(document.getElementById("d-body").textContent);
   const m = document.getElementById("copy-msg");
-  m.textContent = "コピーしました!noteに貼り付けてください";
+  m.textContent = "コピーしました!ブログに貼り付けてください";
   setTimeout(() => (m.textContent = ""), 3000);
 }
 
@@ -319,8 +314,6 @@ function fillConfig() {
   document.getElementById("cfg-quality_threshold").value = c.quality_threshold;
   document.getElementById("cfg-max_revisions").value = c.max_revisions;
   document.getElementById("cfg-model").value = c.model;
-  document.getElementById("cfg-price-min").value = c.price_range_yen[0];
-  document.getElementById("cfg-price-max").value = c.price_range_yen[1];
   document.getElementById("cfg-genres").value = c.genres.join("\n");
   document.getElementById("x-status").textContent = state.x_configured
     ? "✅ X APIキー設定済み: 告知ツイートを自動投稿できます(@Interkyky)"
@@ -333,8 +326,6 @@ async function saveConfig() {
     quality_threshold: +document.getElementById("cfg-quality_threshold").value,
     max_revisions: +document.getElementById("cfg-max_revisions").value,
     model: document.getElementById("cfg-model").value,
-    price_range_yen: [+document.getElementById("cfg-price-min").value,
-                      +document.getElementById("cfg-price-max").value],
     genres: document.getElementById("cfg-genres").value.split("\n").map(s => s.trim()).filter(Boolean),
   };
   const res = await fetch("/api/config", {

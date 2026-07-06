@@ -18,7 +18,7 @@ PLAN_SCHEMA = {
                     "meta_description": {"type": "string"},
                     "monetization": {
                         "type": "string",
-                        "enum": ["adsense", "free", "partial_paid", "full_paid"],
+                        "enum": ["adsense"],
                     },
                     "price_yen": {"type": "integer"},
                     "monetization_reason": {"type": "string"},
@@ -46,8 +46,11 @@ AdSense収益の構造を熟知しています:
 - 滞在時間とページ回遊が伸びるほど広告収益は上がる
 - GoogleのAI Overview等のAI検索に引用されると新しい流入源になる(結論ファースト・構造化が有利)
 - 読者の役に立たない記事はAdSense審査・SEOの両方で不利になる
+- 広告単価(CPC)はカテゴリで大きく違う。転職・副業とお金(税金等)・資格/スクール・通信/ビジネスサービス比較は高単価。日常雑記・エンタメは低単価
+- ただしYMYL(医療の診断・投資の推奨・法律判断)は断定を避け、一般的な情報+公式情報への誘導に留める
 
 あなたの仕事は、検索需要から逆算して「今書くべき記事」と「狙うキーワード」を決めることです。
+高単価カテゴリを7〜8割、集客用のAI活用系を2〜3割の比率で選定してください。
 monetization は原則 "adsense"、price_yen は 0 とし、
 monetization_reason にはキーワード選定の理由(検索需要・競合の弱さ・読者の悩みの強さ)を書いてください。"""
 

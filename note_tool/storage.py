@@ -7,8 +7,6 @@ from pathlib import Path
 
 from .config import ARTICLES_DIR, STATE_PATH
 
-PAID_MARKER = "＝＝＝＝＝ ここから有料ライン ＝＝＝＝＝"
-
 
 def _load_state() -> dict:
     if STATE_PATH.exists():

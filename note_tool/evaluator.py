@@ -69,10 +69,7 @@ buyer_perspective には「検索でこの記事に来た読者として、最�
 
 def format_review(plan: dict, evaluation: dict, revisions: int, config: dict) -> str:
     """最終チェック用の評価レポート(review.md)を組み立てる。"""
-    monetization = plan.get("monetization", "adsense")
-    label = MONETIZATION_LABEL.get(monetization, monetization)
-    if monetization in ("partial_paid", "full_paid"):
-        label += f" / 価格 {plan.get('price_yen', 0)}円"
+    label = MONETIZATION_LABEL.get(plan.get("monetization", "adsense"), "広告収益(Google AdSense)")
 
     scores = "\n".join(
         f"| {desc} | {evaluation['scores'].get(key, '-')} |" for key, desc in AXES
@@ -81,35 +78,20 @@ def format_review(plan: dict, evaluation: dict, revisions: int, config: dict) ->
     improvements = "\n".join(f"- {s}" for s in evaluation["improvements"]) or "- なし"
     hashtags = " ".join(plan.get("hashtags", []))
 
-    if monetization == "adsense":
-        steps = [
-            "`article.md` の中身を全選択してコピー",
-            "ブログ(WordPress等)の新規記事にMarkdownとして貼り付け(見出し・表は自動反映)",
-            f"タイトルをそのまま設定し、メタディスクリプションに「{plan.get('meta_description', '')}」を設定",
-            "本文中の `<!-- AD -->` の位置に広告ユニットを配置(自動広告の場合はマーカー行を削除するだけでOK)",
-            "関連する過去記事があれば「あわせて読みたい」に内部リンクを1〜2本追加",
-            "パーマリンクを英語スラッグに変更(例: chatgpt-gijiroku)して公開",
-            f"X告知(下記の下書きを使用)/ 推奨タグ: {hashtags}",
-        ]
-        extra = f"""
+    steps = [
+        "`article.md` の中身を全選択してコピー",
+        "ブログ(WordPress等)の新規記事にMarkdownとして貼り付け(見出し・表は自動反映)",
+        f"タイトルをそのまま設定し、メタディスクリプションに「{plan.get('meta_description', '')}」を設定",
+        "本文中の `<!-- AD -->` の位置に広告ユニットを配置(自動広告の場合はマーカー行を削除するだけでOK)",
+        "関連する過去記事があれば「あわせて読みたい」に内部リンクを1〜2本追加",
+        "パーマリンクを英語スラッグに変更して公開",
+        f"X告知(下記の下書きを使用)/ 推奨タグ: {hashtags}",
+    ]
+    extra = f"""
 ## SEO情報
 - 狙うキーワード: **{plan.get("target_keyword", "")}**
 - メタディスクリプション案: {plan.get("meta_description", "")}
 """
-    else:
-        steps = [
-            "`article.md` の中身を全選択してコピー",
-            "noteの新規記事作成画面に貼り付け",
-            "タイトルと本文を最終確認",
-        ]
-        if monetization in ("partial_paid", "full_paid"):
-            steps += [
-                f"公開設定で「有料」を選び、価格を **{plan.get('price_yen', 0)}円** に設定",
-                "有料ラインを「＝＝＝＝＝ ここから有料ライン ＝＝＝＝＝」の位置に設定し、マーカー行を削除",
-            ]
-        steps += [f"ハッシュタグ: {hashtags}", "公開!"]
-        extra = ""
-
     steps_md = "\n".join(f"{i}. {s}" for i, s in enumerate(steps, 1))
 
     return f"""# 最終チェックシート: {plan["title"]}

@@ -1,7 +1,6 @@
 """記事本文の生成とリライト(AdSense収益化ブログ用)。"""
 
 from .claude_client import ClaudeClient
-from .storage import PAID_MARKER  # noteモード(レガシー)互換のため残す
 
 SYSTEM = """あなたは検索1位を量産する実力派のSEOライターです。
 Google AdSenseで収益化するブログ記事を書きます。読者の検索意図に最短で答えつつ、

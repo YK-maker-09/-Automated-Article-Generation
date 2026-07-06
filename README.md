@@ -1,156 +1,59 @@
-# note記事自動生成ツール
+# ブログ記事自動生成ツール(Google AdSense収益化)
 
-note(note.com)への投稿記事を **AIが多角的に分析・評価しながら自動生成** し、投稿後の **X(@Interkyky)への告知まで自動化** するツールです。
-
-月30本(変更可能)の記事投稿で、月5〜10万円の収益を目指す運用を想定しています。
+自分のブログに投稿する記事を **AIが多角的に分析・評価しながら自動生成** し、**Google AdSenseの広告収益**を狙うツールです。**1日10記事(月300記事)** の自動生成体制で運用します。
 
 ## できること
 
 | 機能 | 内容 |
 |---|---|
-| 記事プラン立案 | テーマ・タイトル・構成をAIがその都度判断(需要・季節性・重複回避を考慮) |
-| 収益化方式の自動判断 | 「全文無料(集客用)」「一部有料(ここから有料=有料ライン方式)」「全文有料」のどれにするか、価格をいくらにするかをAIが戦略的に判断し、理由も提示 |
-| 記事本文の生成 | noteにそのままコピペできるMarkdownで2,500〜4,000字の記事を執筆 |
-| 多角的評価 | タイトル訴求力/導入の引き込み/実用価値/独自性/読みやすさ/収益化設計/拡散性 の7軸で辛口採点 |
-| 自動リライト | 合格点(既定80点)未満なら自動でリライト&再評価(最大2回) |
-| 最終チェック支援 | 評価レポート+投稿手順書(review.md)を記事ごとに出力。**投稿の最終判断はあなたが行います** |
-| X自動告知 | note投稿完了を記録すると、告知ツイートを自動生成してXに投稿 |
-| 本数の増減 | `monthly_target` の設定変更だけで月間目標本数を変更可能 |
+| キーワード選定 | 検索需要のあるロングテールキーワードをAIが選定。**広告単価の高いカテゴリ(転職/副業とお金/資格・学習/サービス比較)を優先** |
+| 記事生成 | 2,800〜4,500字のブログ用Markdown。**結論ファーストのリード・疑問形見出し・比較表・FAQ**で滞在時間とAI検索(AI Overview等)への引用されやすさを最適化 |
+| 広告配置支援 | 最適な広告位置に `<!-- AD -->` マーカーを3箇所自動挿入 |
+| SEO情報出力 | メタディスクリプション・狙うキーワード・内部リンク候補を毎回出力 |
+| 多角的評価 | 検索意図/滞在時間/E-E-A-T/AI引用適性/読みやすさ/広告収益性/独自性 の7軸で辛口採点。80点未満は自動リライト |
+| X告知 | 記事ごとに告知文の下書きを出力。X APIキーがあれば自動投稿も可 |
+| 管理 | GUI・CLIで記事一覧・進捗(x/300)を管理 |
 
-## 費用をかけない使い方(Claude APIなしで運用する)
+## 運用のしかた(2通り)
 
-Claude APIを契約していなくても、**普段お使いのClaude(Cowork / Claude Desktop / Claude.ai)の利用枠**で同じ品質基準の記事を作れます。追加費用はゼロです。
+### A. Coworkの定期実行(標準・費用ゼロ)
 
-- **Cowork / Claude Code の場合**: このリポジトリを開いて「記事を1本作って」と言うだけ。リポジトリ内の `CLAUDE.md` に生成手順(プラン→執筆→7軸評価→リライト→保存)が定義されており、Claudeがツールと同じ形式で `articles/` に保存し、管理台帳にも登録します
-- **Claude Desktop / Claude.ai の場合**: `prompts/ClaudeDesktop用プロンプト.md` の内容を会話に貼り付けるだけ。記事本文・チェックシート・X告知文まで一括で出力されます
-- **X告知**: 生成された告知文をXアプリに手動で貼るか、PCで
-  `python -m note_tool posted <記事ID> --url <noteのURL> --tweet "<告知文>"`
-  を実行(X APIキーがあれば自動投稿。**Claude APIキーは不要**)
+Coworkに登録済みのルーティンが **毎日6時〜15時(JST)に1時間おきに1本、計10本** を自動生成し、チャットに article.md + review.md を届けます。Claude APIは使いません。
 
-GUI(`python -m note_tool gui`)からの全自動生成を使いたくなったときだけ、Claude APIのチャージが必要になります。
+あなたの作業は「ブログに貼り付けて公開」だけ。詳細は **`運用手順.md`** を参照。
 
-## セットアップ
-
-### 1. 依存パッケージのインストール
+### B. GUI/CLI(Claude APIチャージ時のみ)
 
 ```bash
 pip install -r requirements.txt
+cp .env.example .env   # ANTHROPIC_API_KEY を記入
+python -m note_tool gui        # ブラウザGUI
+python -m note_tool generate   # CLIで1本生成
 ```
 
-### 2. APIキーの設定
+## ブログとAdSenseの準備
 
-`.env.example` をコピーして `.env` を作り、キーを記入します。
+**AdSenseは自分のブログが必要です**(WordPress推奨/無料ならBlogger)。開設〜審査申請〜広告配置〜収益の現実的な見通しまで **`AdSense開設ガイド.md`** にまとめています。
 
-```bash
-cp .env.example .env
-```
+> ⚠️ 収益の目安: AdSenseは1,000PVあたり200〜500円程度。月5万円には月10〜25万PVが必要で、新規ブログの検索流入が育つには3〜6ヶ月かかります。アフィリエイト併用・X流入での補強を推奨します(ガイド参照)。
 
-- **ANTHROPIC_API_KEY**(必須): [Claude Platform](https://platform.claude.com/) で取得
-- **X_API_KEY 等**(任意): [X Developer Portal](https://developer.x.com/) でアプリを作成し、**Read and write 権限** を付けて4つのキーを取得。未設定でもツイート文面は生成されるので手動投稿できます
-
-### 3. 設定の確認(任意)
+## 主なコマンド
 
 ```bash
-python -m note_tool config
-```
-
-`config.json` を直接編集するか、コマンドで変更できます:
-
-```bash
-python -m note_tool config --set monthly_target=40      # 月間目標本数を増やす
-python -m note_tool config --set quality_threshold=85   # 合格基準を上げる
-```
-
-`genres`(得意ジャンルのリスト)は自分の発信軸に合わせて `config.json` を書き換えるのがおすすめです。
-
-## 使い方①: GUI(推奨)
-
-```bash
-python -m note_tool gui
-```
-
-ブラウザが自動で開きます(http://127.0.0.1:8787)。画面は3タブ構成です:
-
-- **記事を生成** — 本数とテーマ(任意)を入れて「生成スタート」。進捗ログがリアルタイムで表示されます
-- **記事一覧** — 記事をクリックすると詳細が開きます
-  - 「📋 本文をコピー」ボタン → noteの新規記事に貼り付けるだけ
-  - 最終チェックシート(AI評価・有料ラインの位置・価格・手順)を横に表示
-  - note投稿後はURLを入れて「ツイート文を生成」→ 文面を編集 →「Xに投稿して記録」
-- **設定** — 月間目標本数・合格基準・価格帯・ジャンル・使用モデルを画面から変更
-
-ポートを変えたい場合は `python -m note_tool gui --port 9000`。
-
-## 使い方②: コマンドライン
-
-### ① 記事を生成する
-
-```bash
-python -m note_tool generate           # 1本生成
-python -m note_tool generate -n 3      # 3本まとめて生成
-python -m note_tool generate --theme "ChatGPTで家計簿を自動化する方法"   # テーマ指定
-```
-
-生成が終わると `articles/YYYY-MM/記事ID_タイトル/` に3つのファイルができます:
-
-- **article.md** — noteに貼り付ける記事本文
-- **review.md** — AI評価レポート+投稿手順書(最終チェック用)
-- **meta.json** — プラン・評価の生データ
-
-### ② あなたが最終チェック → noteに投稿
-
-1. `review.md` を開き、評価と「残っている改善余地」を確認
-2. `article.md` を全選択コピーして、noteの新規記事に貼り付け
-3. 有料記事の場合は、本文中の「＝＝＝＝＝ ここから有料ライン ＝＝＝＝＝」の位置に有料ラインを設定し、マーカー行を削除。価格は review.md 記載の金額に
-4. 公開!
-
-### ③ 投稿できたらXに自動告知
-
-```bash
-python -m note_tool posted 20260704-001 --url https://note.com/xxxx/n/xxxxxxxx
-```
-
-告知ツイートがAIで生成され、X(@Interkyky)に自動投稿されます。
-
-- 文面だけ先に確認したいとき: `--dry-run`
-- X投稿せず記録だけしたいとき: `--skip-x`
-
-### ④ 進捗を確認する
-
-```bash
-python -m note_tool status   # 今月の本数・投稿済み数・想定売上
-python -m note_tool list     # 記事一覧と状態
-```
-
-## 収益化の仕組みについて
-
-noteの標準機能は「**有料ライン方式**」です(記事の途中に線を引き、そこから先は購入者だけが読める=よく見る「ここから先は有料です」)。「広告を見てから読める」方式はnoteの標準機能にはないため、本ツールは以下の3方式から記事ごとにAIが最適なものを選びます:
-
-- **全文無料** — フォロワー獲得・信頼構築・有料記事への導線(集客の役割)
-- **一部有料** — 無料部分で価値を見せて引き込み、核心ノウハウを有料ラインの先に置く(収益の主力)
-- **全文有料** — 冒頭のみ無料。強いノウハウ系記事向け
-
-価格は既定で100〜500円の範囲でAIが提案します(`price_range_yen` で変更可)。
-
-> ⚠️ 収益はフォロワー数・記事の質・継続期間に大きく左右されます。月5〜10万円は「30本運用を数ヶ月継続した場合の目標値」であり、保証されるものではありません。無料記事での集客とXでの拡散を並行して続けることが重要です。
-
-## コストの目安
-
-既定モデルは Claude Opus 4.8 です。1記事あたり(プラン+執筆+評価+リライト)概ね数十円〜百数十円程度、月30本で数千円程度が目安です。コストを抑えたい場合は:
-
-```bash
-python -m note_tool config --set model=claude-sonnet-5
+python -m note_tool list                        # 記事一覧
+python -m note_tool status                      # 今月の進捗
+python -m note_tool posted <ID> --url <記事URL> --tweet "<告知文>"   # 投稿記録+X告知(Claude API不要)
+python -m note_tool config --set monthly_target=300                  # 設定変更
 ```
 
 ## ファイル構成
 
 ```
-note_tool/           ツール本体
-  planner.py         記事プラン立案(テーマ・収益化方式の判断)
-  writer.py          本文執筆・リライト
-  evaluator.py       7軸評価・レポート生成
-  x_poster.py        X告知ツイート生成・投稿
-  cli.py             コマンド定義
-config.json          設定(初回実行後に生成。直接編集OK)
-articles/            生成された記事
-data/state.json      進捗管理データ
+note_tool/            ツール本体(planner/writer/evaluator/x_poster/cli/webapp)
+CLAUDE.md             Cowork自動生成のパイプライン定義
+AdSense開設ガイド.md   ブログ開設〜審査〜広告配置ガイド
+運用手順.md            毎日の運用フロー
+config.json           設定(目標本数・ジャンル・合格基準など)
+articles/             生成された記事(article.md / review.md / meta.json)
+data/state.json       管理台帳
 ```

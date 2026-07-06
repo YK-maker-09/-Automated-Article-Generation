@@ -5,7 +5,7 @@
   python -m note_tool generate [-n 本数] [--theme "テーマ"]   記事を生成
   python -m note_tool list [--month YYYY-MM]                  記事一覧
   python -m note_tool status                                  今月の進捗
-  python -m note_tool posted <記事ID> --url <noteのURL>       投稿記録 & X告知
+  python -m note_tool posted <記事ID> --url <記事URL>         投稿記録 & X告知
   python -m note_tool config [--set key=value]                設定の確認・変更
 """
 
@@ -35,8 +35,8 @@ def cmd_generate(args) -> None:
     print("\n──────────────────────────────")
     print("次のステップ:")
     print("  1. 各記事フォルダの review.md(評価と投稿手順)を確認")
-    print("  2. article.md をnoteにコピペして投稿")
-    print("  3. python -m note_tool posted <記事ID> --url <noteのURL> でX告知")
+    print("  2. article.md をブログにコピペして投稿(<!-- AD -->の位置に広告)")
+    print("  3. python -m note_tool posted <記事ID> --url <記事URL> でX告知")
     _print_status(config)
 
 
@@ -149,7 +149,7 @@ def main() -> None:
     load_dotenv(config_module.BASE_DIR / ".env")
 
     parser = argparse.ArgumentParser(
-        prog="note_tool", description="note記事自動生成ツール(多角的評価 & X告知つき)"
+        prog="note_tool", description="AdSenseブログ記事自動生成ツール(SEO評価 & X告知つき)"
     )
     sub = parser.add_subparsers(dest="command", required=True)
 
@@ -165,9 +165,9 @@ def main() -> None:
     p = sub.add_parser("status", help="今月の進捗を表示する")
     p.set_defaults(func=cmd_status)
 
-    p = sub.add_parser("posted", help="note投稿を記録し、Xに告知する")
+    p = sub.add_parser("posted", help="ブログ投稿を記録し、Xに告知する")
     p.add_argument("article_id", help="記事ID(list コマンドで確認)")
-    p.add_argument("--url", required=True, help="公開したnote記事のURL")
+    p.add_argument("--url", required=True, help="公開した記事のURL")
     p.add_argument("--tweet", help="告知文を直接指定(AI生成を省略。Claude APIキー不要)")
     p.add_argument("--skip-x", action="store_true", help="X投稿をスキップ(文面生成のみ)")
     p.add_argument("--dry-run", action="store_true", help="投稿・記録をせず文面だけ確認")
