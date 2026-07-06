@@ -178,8 +178,8 @@ async function refreshState() {
   state = await (await fetch("/api/state")).json();
   const c = state.config;
   document.getElementById("progress").textContent =
-    `${state.month}: 生成 ${state.monthly_generated}/${c.monthly_target} 本・投稿済み ${state.monthly_posted} 本` +
-    (state.paid_posted_count ? `・有料 ${state.paid_posted_count} 本(計 ${state.paid_price_total.toLocaleString()}円)` : "");
+    `${state.month}: AdSense記事 ${state.monthly_generated}/${c.monthly_target} 本・投稿済み ${state.monthly_posted} 本` +
+    (state.legacy_count ? `(旧note ${state.legacy_count} 本は除く)` : "");
   renderArticles();
   fillConfig();
 }

@@ -79,15 +79,15 @@ def api_state():
     config = config_module.load_config()
     month = datetime.now().strftime("%Y-%m")
     monthly = storage.list_articles(month)
-    posted = [a for a in monthly if a["status"] == "posted"]
-    paid_posted = [a for a in posted if a["monetization"] != "free"]
+    ad_articles = [a for a in monthly if a["monetization"] == "adsense"]
+    legacy = [a for a in monthly if a["monetization"] != "adsense"]
+    posted = [a for a in ad_articles if a["status"] == "posted"]
     return jsonify({
         "config": config,
         "month": month,
-        "monthly_generated": len(monthly),
+        "monthly_generated": len(ad_articles),
         "monthly_posted": len(posted),
-        "paid_posted_count": len(paid_posted),
-        "paid_price_total": sum(a["price_yen"] for a in paid_posted),
+        "legacy_count": len(legacy),
         "x_configured": x_credentials_available(),
         "articles": list(reversed(storage.list_articles())),
     })

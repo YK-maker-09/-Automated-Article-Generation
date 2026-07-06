@@ -129,20 +129,16 @@ def _remaining_this_month(config: dict) -> int:
 def _print_status(config: dict) -> None:
     month = datetime.now().strftime("%Y-%m")
     articles = storage.list_articles(month)
-    posted = [a for a in articles if a["status"] == "posted"]
+    # AdSense記事のみを進捗としてカウント(旧note記事はレガシーとして除外)
     ad_articles = [a for a in articles if a["monetization"] == "adsense"]
-    paid_posted = [a for a in posted if a.get("price_yen", 0) > 0]
+    legacy = [a for a in articles if a["monetization"] != "adsense"]
+    posted = [a for a in ad_articles if a["status"] == "posted"]
     goal_min, goal_max = config["revenue_goal_yen"]
-    print(f"\n📊 {month} の進捗")
-    print(f"  生成済み: {len(articles)} / {config['monthly_target']} 本(投稿済み {len(posted)} 本)")
-    if ad_articles:
-        print(f"  広告収益記事(AdSense): {len(ad_articles)} 本 — 収益はPV次第(AdSense管理画面で確認)")
-    if paid_posted:
-        total_price = sum(a["price_yen"] for a in paid_posted)
-        print(f"  投稿済み有料記事: {len(paid_posted)} 本(価格合計 {total_price:,} 円)")
-        for sales in (10, 30):
-            print(f"    各記事が月{sales}部売れた場合の想定売上: 約 {total_price * sales:,} 円")
-    print(f"  収益目標: {goal_min:,}〜{goal_max:,} 円/月")
+    print(f"\n📊 {month} の進捗(AdSense記事)")
+    print(f"  生成済み: {len(ad_articles)} / {config['monthly_target']} 本(投稿済み {len(posted)} 本)")
+    if legacy:
+        print(f"  ※ 旧note記事 {len(legacy)} 本はレガシー(進捗に含めません)")
+    print(f"  収益目標: {goal_min:,}〜{goal_max:,} 円/月(収益はPV次第・AdSense管理画面で確認)")
 
 
 def main() -> None:
