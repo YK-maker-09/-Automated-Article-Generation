@@ -1,21 +1,21 @@
-<h1>ChatGPTで議事録を自動作成する方法|無料でできる手順を解説</h1>
-<p>ChatGPTで議事録を作る方法は、「①会議を録音 → ②無料ツールで文字起こし → ③ChatGPTに整形させる」の3ステップです。<br>この流れなら追加費用ゼロで、議事録作成が大幅に短縮できます。私の場合、週次定例(60分会議)の議事録にかかる時間は約45分→8分になりました(内訳: 文字起こしの待ち時間5分+ChatGPT整形1分+固有名詞チェック2分)。<br>この記事では、無料ツールの選び方から、コピペで使える議事録プロンプト、精度を上げるコツまでを順に解説します。</p>
+<div style="line-height:1.9;font-size:16px;">
+<p style="margin:0 0 1em;line-height:1.9;">ChatGPTで議事録を作る方法は、「①会議を録音 → ②無料ツールで文字起こし → ③ChatGPTに整形させる」の3ステップです。<br>この流れなら追加費用ゼロで、議事録作成が大幅に短縮できます。私の場合、週次定例(60分会議)の議事録にかかる時間は約45分→8分になりました(内訳: 文字起こしの待ち時間5分+ChatGPT整形1分+固有名詞チェック2分)。<br>この記事では、無料ツールの選び方から、コピペで使える議事録プロンプト、精度を上げるコツまでを順に解説します。</p>
 <!-- 広告ユニットをここに配置 -->
-<h2>ChatGPTだけでは議事録が作れない理由</h2>
-<p>まず前提の整理です。<strong>ChatGPTの通常のチャット画面は、会議の録音ファイルを直接読み込んで文字起こしすることができません</strong>(スマホアプリの音声入力は「自分が話す」用で、長時間の会議録音には不向きです)。</p>
-<p>そのため議事録作成とは、正確には次の分業になります。</p>
-<ul><li><strong>文字起こし(音声→テキスト)</strong>: 専用の無料ツールが担当</li><li><strong>議事録化(テキスト→整理された文書)</strong>: ChatGPTが担当</li></ul>
-<p>ChatGPTが得意なのは後半です。発言の羅列から「決定事項」「宿題」「論点」を抜き出して整形する作業は、人間がやると一番時間がかかる部分ですが、ChatGPTなら数十秒で終わります。</p>
-<h2>無料でできる文字起こしツールの比較</h2>
-<p>文字起こしは、次の無料ツールのどれかで十分です。</p>
-<table border="1" cellpadding="6" cellspacing="0"><thead><tr><th>ツール</th><th>無料枠</th><th>特徴</th><th>向いている人</th></tr></thead><tbody><tr><td>CLOVA Note</td><td>月300分</td><td>話者分離が優秀。スマホ録音もOK</td><td>まず迷ったらこれ</td></tr><tr><td>Googleドキュメント音声入力</td><td>無制限</td><td>PCで会議音声を流しながらリアルタイム変換</td><td>オンライン会議中心</td></tr><tr><td>Windows「ボイスレコーダー+Word」</td><td>Microsoft 365があれば</td><td>Wordの「トランスクリプト」機能で変換</td><td>会社PCで完結させたい人</td></tr></tbody></table>
-<p><strong>話者が複数いる会議ならCLOVA Note</strong>が頭ひとつ抜けています。「誰が話したか」を自動で分けてくれるので、後工程のChatGPTの精度が大きく上がります。</p>
-<h2>ChatGPTで議事録を作る手順(プロンプト付き)</h2>
-<p>ここからが本題です。手順は4つ。</p>
-<ol><li>会議をスマホまたはPCで録音する(参加者に一言断るのがマナーです)</li><li>文字起こしツールに録音を読み込ませ、テキストを全文コピーする</li><li>ChatGPTに下のプロンプトを貼り、続けて文字起こしテキストを貼る</li><li>出てきた議事録を確認し、固有名詞と数字だけ自分でチェックする</li></ol>
-<p>所要時間の目安は、60分会議で「文字起こし5分(ツールの処理待ち)+ChatGPT整形1分+チェック2〜5分」。会議の長さが倍になっても、人間の作業時間はほとんど変わらないのがこの方式の強みです。</p>
-<p>コピペで使えるプロンプトはこちらです。</p>
-<pre><code>あなたは議事録作成の専門家です。以下の会議の文字起こしから、
+<h2 style="margin:1.8em 0 0.6em;line-height:1.5;font-size:1.35em;font-weight:bold;">ChatGPTだけでは議事録が作れない理由</h2>
+<p style="margin:0 0 1em;line-height:1.9;">まず前提の整理です。<strong>ChatGPTの通常のチャット画面は、会議の録音ファイルを直接読み込んで文字起こしすることができません</strong>(スマホアプリの音声入力は「自分が話す」用で、長時間の会議録音には不向きです)。</p>
+<p style="margin:0 0 1em;line-height:1.9;">そのため議事録作成とは、正確には次の分業になります。</p>
+<ul style="margin:0 0 1.2em 1.4em;line-height:1.9;padding:0;"><li style="margin:0.35em 0;"><strong>文字起こし(音声→テキスト)</strong>: 専用の無料ツールが担当</li><li style="margin:0.35em 0;"><strong>議事録化(テキスト→整理された文書)</strong>: ChatGPTが担当</li></ul>
+<p style="margin:0 0 1em;line-height:1.9;">ChatGPTが得意なのは後半です。発言の羅列から「決定事項」「宿題」「論点」を抜き出して整形する作業は、人間がやると一番時間がかかる部分ですが、ChatGPTなら数十秒で終わります。</p>
+<h2 style="margin:1.8em 0 0.6em;line-height:1.5;font-size:1.35em;font-weight:bold;">無料でできる文字起こしツールの比較</h2>
+<p style="margin:0 0 1em;line-height:1.9;">文字起こしは、次の無料ツールのどれかで十分です。</p>
+<div style="overflow-x:auto;"><table style="border-collapse:collapse;width:100%;margin:1em 0;"><thead><tr><th style="border:1px solid #ccc;padding:8px 10px;text-align:left;background:#f4f4f4;">ツール</th><th style="border:1px solid #ccc;padding:8px 10px;text-align:left;background:#f4f4f4;">無料枠</th><th style="border:1px solid #ccc;padding:8px 10px;text-align:left;background:#f4f4f4;">特徴</th><th style="border:1px solid #ccc;padding:8px 10px;text-align:left;background:#f4f4f4;">向いている人</th></tr></thead><tbody><tr><td style="border:1px solid #ccc;padding:8px 10px;text-align:left;">CLOVA Note</td><td style="border:1px solid #ccc;padding:8px 10px;text-align:left;">月300分</td><td style="border:1px solid #ccc;padding:8px 10px;text-align:left;">話者分離が優秀。スマホ録音もOK</td><td style="border:1px solid #ccc;padding:8px 10px;text-align:left;">まず迷ったらこれ</td></tr><tr><td style="border:1px solid #ccc;padding:8px 10px;text-align:left;">Googleドキュメント音声入力</td><td style="border:1px solid #ccc;padding:8px 10px;text-align:left;">無制限</td><td style="border:1px solid #ccc;padding:8px 10px;text-align:left;">PCで会議音声を流しながらリアルタイム変換</td><td style="border:1px solid #ccc;padding:8px 10px;text-align:left;">オンライン会議中心</td></tr><tr><td style="border:1px solid #ccc;padding:8px 10px;text-align:left;">Windows「ボイスレコーダー+Word」</td><td style="border:1px solid #ccc;padding:8px 10px;text-align:left;">Microsoft 365があれば</td><td style="border:1px solid #ccc;padding:8px 10px;text-align:left;">Wordの「トランスクリプト」機能で変換</td><td style="border:1px solid #ccc;padding:8px 10px;text-align:left;">会社PCで完結させたい人</td></tr></tbody></table></div>
+<p style="margin:0 0 1em;line-height:1.9;"><strong>話者が複数いる会議ならCLOVA Note</strong>が頭ひとつ抜けています。「誰が話したか」を自動で分けてくれるので、後工程のChatGPTの精度が大きく上がります。</p>
+<h2 style="margin:1.8em 0 0.6em;line-height:1.5;font-size:1.35em;font-weight:bold;">ChatGPTで議事録を作る手順(プロンプト付き)</h2>
+<p style="margin:0 0 1em;line-height:1.9;">ここからが本題です。手順は4つ。</p>
+<ol style="margin:0 0 1.2em 1.4em;line-height:1.9;padding:0;"><li style="margin:0.35em 0;">会議をスマホまたはPCで録音する(参加者に一言断るのがマナーです)</li><li style="margin:0.35em 0;">文字起こしツールに録音を読み込ませ、テキストを全文コピーする</li><li style="margin:0.35em 0;">ChatGPTに下のプロンプトを貼り、続けて文字起こしテキストを貼る</li><li style="margin:0.35em 0;">出てきた議事録を確認し、固有名詞と数字だけ自分でチェックする</li></ol>
+<p style="margin:0 0 1em;line-height:1.9;">所要時間の目安は、60分会議で「文字起こし5分(ツールの処理待ち)+ChatGPT整形1分+チェック2〜5分」。会議の長さが倍になっても、人間の作業時間はほとんど変わらないのがこの方式の強みです。</p>
+<p style="margin:0 0 1em;line-height:1.9;">コピペで使えるプロンプトはこちらです。</p>
+<pre style="background:#f5f5f5;padding:12px 14px;border-radius:6px;overflow-x:auto;line-height:1.6;margin:1em 0;"><code>あなたは議事録作成の専門家です。以下の会議の文字起こしから、
 社内共有用の議事録を作成してください。
 
 【出力形式】
@@ -31,27 +31,28 @@
 ・不明確な点は「(要確認)」と付ける
 
 (この下に文字起こしテキストを貼る)</code></pre>
-<p>このプロンプトの肝は「不明確な点は(要確認)と付ける」の1行です。AIが推測で断定するのを防げるので、<strong>議事録の信頼性を保ったまま時短</strong>できます。</p>
+<p style="margin:0 0 1em;line-height:1.9;">このプロンプトの肝は「不明確な点は(要確認)と付ける」の1行です。AIが推測で断定するのを防げるので、<strong>議事録の信頼性を保ったまま時短</strong>できます。</p>
 <!-- 広告ユニットをここに配置 -->
-<h2>議事録の精度を上げる3つのコツ</h2>
-<p>同じ手順でも、次の3つで仕上がりが大きく変わります。私が実際に運用して効果があった順に紹介します。</p>
-<h3>コツ1: 会議の冒頭で「録音用の宣言」をする</h3>
-<p>録音開始直後に「7月6日の販促定例、参加は営業部の4名です」と一言入れるだけで、ChatGPTが会議名・日付・参加者を正確に埋められるようになります。</p>
-<h3>コツ2: 文字起こしは「無編集のまま」貼る</h3>
-<p>誤変換を自分で直してから貼る人が多いのですが、逆です。<strong>修正はChatGPTに任せて、人間は最後の固有名詞チェックだけ</strong>に絞るほうが速くて正確です。</p>
-<h3>コツ3: 長い会議は30分ごとに分割して貼る</h3>
-<p>1時間を超える会議の文字起こしを一度に貼ると、要約が粗くなりがちです。30分ぶんずつ貼って部分議事録を作らせ、最後に「以上を統合して1つの議事録に」と頼むと密度が保てます。</p>
-<h2>よくある質問</h2>
-<h3>Q. 会議の録音データをChatGPTに渡すのはセキュリティ的に大丈夫?</h3>
-<p>社外秘の会議では注意が必要です。ChatGPTの設定で「モデルの学習に使用しない」をオフにする(オプトアウト)か、会社が契約する法人向けAI(学習に使われない契約のもの)を使ってください。人名や取引先名を伏せ字にしてから貼るのも有効です。</p>
-<h3>Q. 完全無料でどこまでできますか?</h3>
-<p>CLOVA Noteの無料枠(月300分)+ChatGPTの無料プランで、週1〜2回の定例会議なら十分運用できます。毎日会議がある場合は文字起こし枠が不足するので、Googleドキュメント音声入力を併用してください。</p>
-<h3>Q. Zoomの録画から議事録を作れますか?</h3>
-<p>作れます。Zoomの録画(音声ファイル)をCLOVA Note等に読み込ませれば、対面会議と同じ手順です。有料プランのZoomなら標準の文字起こし機能をそのまま使うこともできます。</p>
-<h3>Q. 議事録をそのまま共有して問題ないですか?</h3>
-<p>最終チェックは人間がしてください。特に「金額・日付・担当者名」の3つは誤変換の影響が大きいので、この3点だけ確認してから共有するのがおすすめです。</p>
+<h2 style="margin:1.8em 0 0.6em;line-height:1.5;font-size:1.35em;font-weight:bold;">議事録の精度を上げる3つのコツ</h2>
+<p style="margin:0 0 1em;line-height:1.9;">同じ手順でも、次の3つで仕上がりが大きく変わります。私が実際に運用して効果があった順に紹介します。</p>
+<h3 style="margin:1.4em 0 0.5em;line-height:1.5;font-size:1.12em;font-weight:bold;">コツ1: 会議の冒頭で「録音用の宣言」をする</h3>
+<p style="margin:0 0 1em;line-height:1.9;">録音開始直後に「7月6日の販促定例、参加は営業部の4名です」と一言入れるだけで、ChatGPTが会議名・日付・参加者を正確に埋められるようになります。</p>
+<h3 style="margin:1.4em 0 0.5em;line-height:1.5;font-size:1.12em;font-weight:bold;">コツ2: 文字起こしは「無編集のまま」貼る</h3>
+<p style="margin:0 0 1em;line-height:1.9;">誤変換を自分で直してから貼る人が多いのですが、逆です。<strong>修正はChatGPTに任せて、人間は最後の固有名詞チェックだけ</strong>に絞るほうが速くて正確です。</p>
+<h3 style="margin:1.4em 0 0.5em;line-height:1.5;font-size:1.12em;font-weight:bold;">コツ3: 長い会議は30分ごとに分割して貼る</h3>
+<p style="margin:0 0 1em;line-height:1.9;">1時間を超える会議の文字起こしを一度に貼ると、要約が粗くなりがちです。30分ぶんずつ貼って部分議事録を作らせ、最後に「以上を統合して1つの議事録に」と頼むと密度が保てます。</p>
+<h2 style="margin:1.8em 0 0.6em;line-height:1.5;font-size:1.35em;font-weight:bold;">よくある質問</h2>
+<h3 style="margin:1.4em 0 0.5em;line-height:1.5;font-size:1.12em;font-weight:bold;">Q. 会議の録音データをChatGPTに渡すのはセキュリティ的に大丈夫?</h3>
+<p style="margin:0 0 1em;line-height:1.9;">社外秘の会議では注意が必要です。ChatGPTの設定で「モデルの学習に使用しない」をオフにする(オプトアウト)か、会社が契約する法人向けAI(学習に使われない契約のもの)を使ってください。人名や取引先名を伏せ字にしてから貼るのも有効です。</p>
+<h3 style="margin:1.4em 0 0.5em;line-height:1.5;font-size:1.12em;font-weight:bold;">Q. 完全無料でどこまでできますか?</h3>
+<p style="margin:0 0 1em;line-height:1.9;">CLOVA Noteの無料枠(月300分)+ChatGPTの無料プランで、週1〜2回の定例会議なら十分運用できます。毎日会議がある場合は文字起こし枠が不足するので、Googleドキュメント音声入力を併用してください。</p>
+<h3 style="margin:1.4em 0 0.5em;line-height:1.5;font-size:1.12em;font-weight:bold;">Q. Zoomの録画から議事録を作れますか?</h3>
+<p style="margin:0 0 1em;line-height:1.9;">作れます。Zoomの録画(音声ファイル)をCLOVA Note等に読み込ませれば、対面会議と同じ手順です。有料プランのZoomなら標準の文字起こし機能をそのまま使うこともできます。</p>
+<h3 style="margin:1.4em 0 0.5em;line-height:1.5;font-size:1.12em;font-weight:bold;">Q. 議事録をそのまま共有して問題ないですか?</h3>
+<p style="margin:0 0 1em;line-height:1.9;">最終チェックは人間がしてください。特に「金額・日付・担当者名」の3つは誤変換の影響が大きいので、この3点だけ確認してから共有するのがおすすめです。</p>
 <!-- 広告ユニットをここに配置 -->
-<h2>まとめ</h2>
-<ul><li>ChatGPT単体では文字起こしできないため、<strong>録音→文字起こしツール→ChatGPT</strong>の3ステップで分業する</li><li>文字起こしは無料ならCLOVA Noteが第一候補(話者分離が強い)</li><li>プロンプトには「(要確認)を付けさせる」1行を入れて信頼性を保つ</li><li>人間の仕事は最後の固有名詞・数字チェックだけに絞る</li></ul>
-<p>まずは今日の会議を1本録音して、この手順を試してみてください。議事録が「作業」から「確認」に変わります。</p>
-<p>会議メモの次は、毎朝の段取りもAIに任せられます。(関連記事リンク)</p>
+<h2 style="margin:1.8em 0 0.6em;line-height:1.5;font-size:1.35em;font-weight:bold;">まとめ</h2>
+<ul style="margin:0 0 1.2em 1.4em;line-height:1.9;padding:0;"><li style="margin:0.35em 0;">ChatGPT単体では文字起こしできないため、<strong>録音→文字起こしツール→ChatGPT</strong>の3ステップで分業する</li><li style="margin:0.35em 0;">文字起こしは無料ならCLOVA Noteが第一候補(話者分離が強い)</li><li style="margin:0.35em 0;">プロンプトには「(要確認)を付けさせる」1行を入れて信頼性を保つ</li><li style="margin:0.35em 0;">人間の仕事は最後の固有名詞・数字チェックだけに絞る</li></ul>
+<p style="margin:0 0 1em;line-height:1.9;">まずは今日の会議を1本録音して、この手順を試してみてください。議事録が「作業」から「確認」に変わります。</p>
+<p style="margin:0 0 1em;line-height:1.9;">会議メモの次は、毎朝の段取りもAIに任せられます。(関連記事リンク)</p>
+</div>

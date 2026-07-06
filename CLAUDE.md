@@ -54,7 +54,14 @@ review += f"\n## 内部リンク候補\n\n- {関連過去記事のタイトル}\
 review += f"\n## X告知文の下書き(投稿時に末尾へ記事URLを追加)\n\n```\n{tweet_draft}\n```\n"
 storage.save_article(article_id, plan, body, evaluation, review)
 # save_article は article.md と一緒に、Bloggerにそのまま貼れる article.html も自動生成する
+# (article.html は htmlize.py が生成: 先頭タイトルH1は本文に出さず、全要素に行間styleを付与して
+#  どのブログテーマでも文字が重ならないようにする。本文Markdownは必ず「# タイトル」から始めること)
 ```
+
+## レイアウトの注意(重要)
+
+- ユーザーは Blogger に **article.html** を「HTMLビュー」で貼る。タイトルは本文に出さず、ブログのタイトル欄に入れる(二重表示・行間崩れを防ぐため)。この処理は htmlize.py が自動で行うので、本文Markdownは通常どおり「# タイトル」から書いてよい
+- review.md にはタイトルを「最終チェックシート:」抜きの生のタイトルで明示すること(取り違え防止)
 
 ## 定期実行時の通知ポリシー(1日10回動くため)
 

@@ -79,15 +79,21 @@ def format_review(plan: dict, evaluation: dict, revisions: int, config: dict) ->
     hashtags = " ".join(plan.get("hashtags", []))
 
     steps = [
-        "`article.md` の中身を全選択してコピー",
-        "ブログ(WordPress等)の新規記事にMarkdownとして貼り付け(見出し・表は自動反映)",
-        f"タイトルをそのまま設定し、メタディスクリプションに「{plan.get('meta_description', '')}」を設定",
-        "本文中の `<!-- AD -->` の位置に広告ユニットを配置(自動広告の場合はマーカー行を削除するだけでOK)",
-        "関連する過去記事があれば「あわせて読みたい」に内部リンクを1〜2本追加",
+        "ブログ(Blogger)の投稿画面で、ペンのアイコンから **「HTML ビュー」に切り替える**",
+        "**`article.html`**(.md ではなく .html)の中身を全選択してコピーし、本文に貼り付け → 「作成ビュー」に戻す",
+        "上の『ブログのタイトル欄に入れる文字』を、Blogger の **タイトル欄** に貼り付け(本文にタイトルは含まれていません)",
+        f"メタディスクリプションに「{plan.get('meta_description', '')}」を設定(オプション→検索向け説明)",
+        "本文中の `<!-- 広告ユニットをここに配置 -->` の位置に広告を配置(合格前は空欄でOK)",
         "パーマリンクを英語スラッグに変更して公開",
         f"X告知(下記の下書きを使用)/ 推奨タグ: {hashtags}",
     ]
     extra = f"""
+## ブログのタイトル欄に入れる文字(これをコピーしてください)
+
+```
+{plan["title"]}
+```
+
 ## SEO情報
 - 狙うキーワード: **{plan.get("target_keyword", "")}**
 - メタディスクリプション案: {plan.get("meta_description", "")}
