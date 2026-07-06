@@ -1,0 +1,49 @@
+{
+  "id": "20260706-008",
+  "title": "ChatGPTでビジネスメールを作る方法|そのまま使える例文とコツ",
+  "genre": "AI・ChatGPT活用術(仕事効率化の具体手順)",
+  "monetization": "adsense",
+  "price_yen": 0,
+  "score": 85,
+  "created_at": "2026-07-06T12:37:50",
+  "status": "draft",
+  "note_url": null,
+  "x_posted": false,
+  "dir": "/home/user/-Automated-Article-Generation/articles/2026-07/20260706-008_ChatGPTでビジネスメールを作る方法そのまま使える例文と",
+  "plan": {
+    "title": "ChatGPTでビジネスメールを作る方法|そのまま使える例文とコツ",
+    "genre": "AI・ChatGPT活用術(仕事効率化の具体手順)",
+    "target_keyword": "chatgpt ビジネスメール 例文",
+    "meta_description": "ChatGPTでビジネスメールを作る方法を、そのまま使えるプロンプトと例文つきで解説。依頼・お詫び・お礼・catch upなど場面別の作り方、失礼にならない調整のコツ、社内情報を守る注意点まで。メール作成の時間を大きく減らせます。",
+    "theme": "ChatGPTでビジネスメールを効率化する方法を、場面別のプロンプトと調整のコツ、注意点つきで解説",
+    "target_reader": "ビジネスメールの文面作成に毎回時間がかかっている会社員",
+    "id": "20260706-008",
+    "monetization": "adsense",
+    "price_yen": 0,
+    "hashtags": [],
+    "outline": [],
+    "monetization_reason": "検索需要が安定して大きく広告単価の高いカテゴリ。検索意図が明確でAI検索にも引用されやすい構造で上位とAI流入の両方を狙える。"
+  },
+  "evaluation": {
+    "scores": {
+      "search_intent": 86,
+      "dwell_time": 84,
+      "trust": 84,
+      "ai_citability": 87,
+      "readability": 88,
+      "ad_revenue": 84,
+      "originality": 81
+    },
+    "total_score": 85,
+    "strengths": [
+      "『希望する結果を渡す』という、他の記事にない具体的なコツで下書きの質が上がる",
+      "場面別の追加プロンプトを表でまとめ、コピペ運用しやすい",
+      "AI活用は集客の入口になり、議事録・職務経歴書など他のAI記事への回遊を作れる"
+    ],
+    "improvements": [
+      "実際のビフォー/アフターのメール例が1組あると効果が伝わりやすい",
+      "英語メール向けの例文を将来別記事に展開すると流入を広げられる"
+    ],
+    "buyer_perspective": "「chatgpt ビジネスメール 例文」で来た読者として、基本プロンプトと場面別の一言ですぐ使え、注意点まであるので保存する。仕事で毎日使える実用記事。"
+  }
+}
